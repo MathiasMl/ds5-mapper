@@ -1,0 +1,13 @@
+venv/
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+build/
+dist/
+# Intermediate icon-processing artifacts (we commit icon.icns + icon_1024.png)
+icon_flood.png
+icon_src/
+
+# icon dev scratch
+icon_v2/

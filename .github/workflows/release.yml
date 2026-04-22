@@ -1,0 +1,97 @@
+name: Build & release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Install system deps
+        run: brew install hidapi
+      - name: Install Python deps
+        run: |
+          python3 -m venv venv
+          ./venv/bin/pip install --quiet --upgrade pip
+          ./venv/bin/pip install --quiet pysdl2 pysdl2-dll pynput pyobjc-framework-Quartz pyobjc-framework-Cocoa py2app
+      - name: Build .app
+        run: |
+          ./venv/bin/python3 setup.py py2app
+          codesign --force --deep --sign - "dist/DS5 Mapper.app"
+      - name: Zip with ditto
+        run: |
+          cd dist
+          ditto -c -k --sequesterRsrc --keepParent "DS5 Mapper.app" "DS5-Mapper-macOS-${{ github.ref_name }}.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: dist/DS5-Mapper-macOS-*.zip
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Install Python deps
+        run: |
+          python -m venv venv
+          .\venv\Scripts\pip install --quiet --upgrade pip
+          .\venv\Scripts\pip install --quiet pysdl2 pysdl2-dll pynput pyinstaller
+      - name: Build .exe
+        run: |
+          .\venv\Scripts\pyinstaller windows.spec --noconfirm
+      - name: Zip
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist\DS5 Mapper" -DestinationPath "dist\DS5-Mapper-Windows-${{ github.ref_name }}.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/DS5-Mapper-Windows-*.zip
+
+  release:
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/macos/*.zip
+            artifacts/windows/*.zip
+          generate_release_notes: true
+          body: |
+            ## DS5 Mapper ${{ github.ref_name }}
+
+            Downloads for both platforms below.
+
+            ### macOS
+            1. Download **DS5-Mapper-macOS-${{ github.ref_name }}.zip**
+            2. Unzip and drag **DS5 Mapper.app** to `/Applications`
+            3. First launch: **right-click → Open** (unsigned app; Gatekeeper bypass)
+            4. Grant Accessibility + Input Monitoring when prompted
+            5. Calibrate gyro (one-time)
+
+            ### Windows
+            1. Download **DS5-Mapper-Windows-${{ github.ref_name }}.zip**
+            2. Unzip anywhere (e.g. `C:\Program Files\DS5 Mapper`)
+            3. Run **DS5 Mapper.exe**
+            4. If Windows SmartScreen blocks it → click **More info → Run anyway** (unsigned app)
+            5. Calibrate gyro (one-time)
+
+            No permissions prompts on Windows — input synthesis just works.
+
+            See the [README](https://github.com/${{ github.repository }}) for full docs.

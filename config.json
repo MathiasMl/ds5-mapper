@@ -1,0 +1,94 @@
+{
+  "gyro": {
+    "enabled_default": true,
+    "yaw_px_per_360": 27244,
+    "pitch_px_per_360": 27651,
+    "yaw_sign": -1,
+    "pitch_sign": -1,
+    "roll_contribution": 1.0,
+    "cutoff_dps": 1.0,
+    "recovery_dps": 3.0,
+    "smooth_high_dps": 8.0,
+    "smooth_low_dps": 3.0,
+    "calib_secs": 1.5,
+    "auto_load_calibration": true
+  },
+  "stick": {
+    "deadzone": 0.5,
+    "mouse_speed": 22,
+    "exp": 2.0
+  },
+  "trigger_threshold": 0.5,
+  "tick_hz": 200,
+  "buttons": {
+    "cross": {
+      "kind": "mouse",
+      "value": "left"
+    },
+    "circle": {
+      "kind": "key",
+      "value": "b"
+    },
+    "square": {
+      "kind": "key",
+      "value": "q"
+    },
+    "triangle": {
+      "kind": "key",
+      "value": "f"
+    },
+    "l1": {
+      "kind": "mouse",
+      "value": "right"
+    },
+    "r1": {
+      "kind": "key",
+      "value": "e"
+    },
+    "l2_trigger": {
+      "kind": "special",
+      "value": "shift_l"
+    },
+    "r2_trigger": {
+      "kind": "key",
+      "value": "r"
+    },
+    "dpad_up": {
+      "kind": "vk",
+      "value": 18
+    },
+    "dpad_right": {
+      "kind": "vk",
+      "value": 19
+    },
+    "dpad_down": {
+      "kind": "vk",
+      "value": 20
+    },
+    "dpad_left": {
+      "kind": "vk",
+      "value": 23
+    },
+    "l3": {
+      "kind": "vk",
+      "value": 21
+    },
+    "r3": {
+      "kind": "vk",
+      "value": 22
+    },
+    "touchpad": {
+      "kind": "vk",
+      "value": 26
+    },
+    "share": {
+      "kind": "special",
+      "value": "tab"
+    },
+    "options": {
+      "kind": "special",
+      "value": "esc"
+    }
+  },
+  "first_run_completed": true
+}
